@@ -13,6 +13,8 @@
   let loading = false;
   let error = '';
 
+  // This calls the backend tool router. The response includes both a natural
+  // language answer and raw data so the demo can explain what tool was used.
   async function runQuery() {
     loading = true;
     error = '';

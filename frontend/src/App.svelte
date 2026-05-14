@@ -21,10 +21,14 @@
   let loading = true;
   let error = '';
 
+  // App.svelte owns the shared page state. Child components emit events after
+  // mutations, and this refresh keeps dashboard metrics, orders and vehicles aligned.
   async function refresh() {
     loading = true;
     error = '';
     try {
+      // These reads are independent, so loading them in parallel keeps the
+      // operational screen responsive.
       [dashboard, customers, vehicles, orders] = await Promise.all([
         api.getDashboard(),
         api.listCustomers(),

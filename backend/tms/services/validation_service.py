@@ -31,6 +31,8 @@ class DraftValidationResult:
 class ValidationService:
     @staticmethod
     def validate_draft(draft: dict[str, Any]) -> DraftValidationResult:
+        # This service is reused before and after human review, so the same
+        # backend rules protect both AI-generated and edited draft data.
         missing_fields = [
             field
             for field in REQUIRED_DRAFT_FIELDS
@@ -45,6 +47,8 @@ class ValidationService:
                 "VIN must contain 8 to 17 allowed alphanumeric characters without I, O or Q."
             )
         elif vin and len(vin) != 17:
+            # A warning keeps the demo flexible while still teaching that
+            # production VIN validation would be stricter.
             warnings.append("VIN is accepted for the demo but real production VINs usually have 17 characters.")
 
         pickup_date = draft.get("requested_pickup_date")

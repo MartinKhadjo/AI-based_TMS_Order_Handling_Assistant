@@ -63,6 +63,8 @@ class TrackingEventSerializer(serializers.ModelSerializer):
 
 
 class TransportOrderSerializer(serializers.ModelSerializer):
+    # Writes use foreign-key IDs; reads include nested details so the frontend
+    # can render customer/vehicle information without extra API calls.
     customer_detail = CustomerSerializer(source="customer", read_only=True)
     vehicle_detail = VehicleSerializer(source="vehicle", read_only=True)
     carrier_detail = CarrierSerializer(source="carrier", read_only=True)

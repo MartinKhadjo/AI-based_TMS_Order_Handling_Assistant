@@ -15,6 +15,8 @@ import type {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api';
 
+// Centralizing fetch logic keeps components focused on UI behavior. It also
+// gives every endpoint the same JSON headers, error handling and return typing.
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
@@ -63,6 +65,8 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ status })
     }),
+  // AI extraction and confirmation are intentionally separate calls: the first
+  // proposes a draft, the second persists only after human review.
   extractOrder: (message: string) =>
     request<ExtractionResponse>('/ai/extract-order/', {
       method: 'POST',

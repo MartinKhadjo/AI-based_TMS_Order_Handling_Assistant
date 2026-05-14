@@ -16,6 +16,8 @@
   let busyOrderId: number | null = null;
   let error = '';
 
+  // Status changes go through the backend because vehicle synchronization and
+  // transition validation are domain rules, not frontend-only UI behavior.
   async function setStatus(order: TransportOrder, status: string) {
     busyOrderId = order.id;
     error = '';

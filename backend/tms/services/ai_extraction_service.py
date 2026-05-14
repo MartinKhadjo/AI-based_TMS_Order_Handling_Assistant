@@ -32,6 +32,8 @@ class AIExtractionService:
     """
 
     def extract_transport_order(self, message: str) -> ExtractionResult:
+        # Provider selection is isolated here. Views and frontend code keep the
+        # same contract if the mock extractor is replaced by a real LLM adapter.
         if settings.AI_MODE == "openai":
             return self._extract_with_openai(message)
         return self._extract_with_mock(message)
@@ -44,6 +46,8 @@ class AIExtractionService:
         )
 
     def _extract_with_mock(self, message: str) -> ExtractionResult:
+        # Start with an explicit draft shape. Missing values remain None instead
+        # of being invented, which is safer for operational workflows.
         draft: dict[str, Any] = {
             "customer_name": self._extract_customer(message),
             "vehicle_brand": None,
@@ -69,6 +73,8 @@ class AIExtractionService:
         draft["requested_pickup_date"] = pickup_date
         draft["requested_delivery_date"] = delivery_date
 
+        # Validation happens inside the extraction response so the UI can show
+        # missing fields immediately, before the user tries to confirm the draft.
         validation = ValidationService.validate_draft(draft)
         confidence = self._calculate_confidence(draft, validation.validation_errors)
 

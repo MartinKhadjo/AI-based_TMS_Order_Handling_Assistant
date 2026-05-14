@@ -60,6 +60,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Docker Compose provides POSTGRES_HOST. Local development can stay lightweight
+# by omitting it, which makes Django fall back to SQLite automatically.
 if os.getenv("POSTGRES_HOST"):
     DATABASES = {
         "default": {

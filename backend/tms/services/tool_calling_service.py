@@ -22,6 +22,8 @@ class ToolCallingService:
     """Tiny deterministic tool router that demonstrates MCP-style thinking."""
 
     def answer_operational_query(self, message: str) -> ToolResult:
+        # The demo uses keyword routing so the behavior is explainable and
+        # reproducible. A real LLM tool router could call the same private methods.
         lowered = message.lower()
         if any(term in lowered for term in ["nicht disponiert", "unassigned", "available", "frei"]):
             return self._get_unassigned_vehicles()
@@ -41,6 +43,8 @@ class ToolCallingService:
         )
 
     def _get_unassigned_vehicles(self) -> ToolResult:
+        # Return dictionaries instead of model instances because API responses
+        # should expose only the fields the tool needs.
         vehicles = list(
             Vehicle.objects.filter(status=Vehicle.Status.AVAILABLE)
             .order_by("brand", "model")

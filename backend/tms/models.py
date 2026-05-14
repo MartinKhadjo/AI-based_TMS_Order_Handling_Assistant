@@ -6,6 +6,8 @@ from django.db import models
 
 
 class TimeStampedModel(models.Model):
+    # Shared audit fields keep every domain object traceable without repeating
+    # created_at/updated_at declarations in each model.
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -74,6 +76,8 @@ class Vehicle(TimeStampedModel):
 
 
 class TransportOrder(TimeStampedModel):
+    # TransportOrder is the aggregate root of the demo: it connects customer,
+    # vehicle, route, lifecycle status and AI origin in one business record.
     class Status(models.TextChoices):
         OPEN = "open", "Open"
         PLANNED = "planned", "Planned"
@@ -164,6 +168,8 @@ class Invoice(TimeStampedModel):
 
 
 class AIExtractionLog(TimeStampedModel):
+    # AI output is stored as an audit trail. The AI proposes structured data,
+    # but confirmed domain objects are still created through backend services.
     raw_input = models.TextField()
     extracted_json = models.JSONField(default=dict)
     confidence_score = models.DecimalField(max_digits=4, decimal_places=2, default=0)

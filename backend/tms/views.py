@@ -73,6 +73,9 @@ class TransportOrderViewSet(viewsets.ModelViewSet):
             )
         order.status = next_status
         order.save(update_fields=["status", "updated_at"])
+
+        # Keep vehicle availability aligned with the order lifecycle. In a real
+        # TMS this prevents dispatching a vehicle that is already in transport.
         if next_status == TransportOrder.Status.IN_TRANSIT:
             order.vehicle.status = Vehicle.Status.IN_TRANSIT
             order.vehicle.save(update_fields=["status", "updated_at"])
@@ -127,7 +130,12 @@ class ExtractOrderAPIView(APIView):
         if not message.strip():
             return Response({"detail": "message is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # The AI layer returns a draft only. It does not create customers,
+        # vehicles or orders, so human review remains part of the workflow.
         result = AIExtractionService().extract_transport_order(message)
+
+        # Store the raw input and extracted JSON for traceability. This makes it
+        # possible to explain later what the AI suggested and which issues existed.
         AIExtractionLog.objects.create(
             raw_input=message,
             extracted_json=result.draft,
@@ -152,6 +160,8 @@ class CreateOrderDraftAPIView(APIView):
         if not isinstance(draft, dict):
             return Response({"detail": "draft object is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Validate again at the write boundary. Frontend validation or previous
+        # extraction results are helpful, but the backend owns data integrity.
         validation = ValidationService.validate_draft(draft)
         if not validation.is_valid:
             return Response(
@@ -164,6 +174,8 @@ class CreateOrderDraftAPIView(APIView):
             )
 
         try:
+            # OrderService owns the transaction and the domain side effects:
+            # customer/vehicle lookup, order creation, vehicle assignment and tracking.
             order = OrderService().create_order_from_draft(draft)
         except ValueError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
@@ -184,6 +196,9 @@ class QueryOrdersAPIView(APIView):
         message = request.data.get("message", "")
         if not message.strip():
             return Response({"detail": "message is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # This deterministic router demonstrates tool-calling architecture
+        # without depending on an external LLM during the interview demo.
         result = ToolCallingService().answer_operational_query(message)
         return Response(
             {

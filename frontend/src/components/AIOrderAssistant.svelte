@@ -27,6 +27,8 @@
     success = '';
     try {
       result = await api.extractOrder(message);
+      // Keep an editable copy. The backend draft is a proposal, and the user
+      // should be able to correct it before confirming the transport order.
       draft = { ...result.draft };
     } catch (err) {
       error = err instanceof Error ? err.message : 'Extraction failed';
@@ -43,6 +45,7 @@
     try {
       const order = await api.createOrderDraft(draft, message, result.confidence);
       success = `Order #${order.id} created.`;
+      // Tell the parent page to reload operational data after the backend write.
       dispatch('created');
     } catch (err) {
       error = err instanceof Error ? err.message : 'Draft creation failed';

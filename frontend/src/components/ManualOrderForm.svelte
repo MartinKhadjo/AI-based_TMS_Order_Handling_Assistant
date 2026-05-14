@@ -24,6 +24,8 @@
   let success = '';
   let saving = false;
 
+  // Manual creation uses the standard CRUD endpoint. It exists beside the AI
+  // flow to show that the product still works without AI assistance.
   async function submit() {
     error = '';
     success = '';

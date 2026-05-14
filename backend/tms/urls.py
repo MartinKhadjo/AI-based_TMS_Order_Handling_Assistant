@@ -28,6 +28,8 @@ router.register("tracking-events", TrackingEventViewSet)
 router.register("invoices", InvoiceViewSet)
 router.register("ai/logs", AIExtractionLogViewSet)
 
+# Router URLs cover normal CRUD resources. Explicit paths below model workflow
+# actions such as extraction, draft confirmation and operational tool queries.
 urlpatterns = [
     path("", include(router.urls)),
     path("dashboard/", DashboardAPIView.as_view(), name="dashboard"),

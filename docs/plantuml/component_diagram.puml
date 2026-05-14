@@ -1,0 +1,40 @@
+' Copyright (c) 2026 Martin Khadjavian. All rights reserved.
+' Website: https://martinkhadjavian.com
+
+@startuml
+title LogiSense Demo Lite - Component Diagram
+
+skinparam componentStyle rectangle
+
+actor "Dispatcher / Demo User" as User
+
+component "Svelte Frontend" as Frontend {
+  [Dashboard]
+  [Order Queue]
+  [AI Order Assistant]
+  [Operational Query]
+}
+
+component "Django REST API" as API {
+  [ViewSets]
+  [AI APIViews]
+  [Dashboard API]
+}
+
+component "Domain Services" as Services {
+  [OrderService]
+  [ValidationService]
+  [AIExtractionService]
+  [ToolCallingService]
+}
+
+database "PostgreSQL / SQLite" as DB
+
+User --> Frontend
+Frontend --> API : JSON over HTTP
+API --> Services
+Services --> DB : Django ORM
+[AIExtractionService] --> [ValidationService]
+[ToolCallingService] --> DB
+
+@enduml

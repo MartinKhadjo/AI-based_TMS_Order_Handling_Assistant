@@ -1,0 +1,78 @@
+' Copyright (c) 2026 Martin Khadjavian. All rights reserved.
+' Website: https://martinkhadjavian.com
+
+@startuml
+title LogiSense Demo Lite - Domain Class Diagram
+
+class Customer {
+  id
+  name
+  contact_email
+  company_type
+}
+
+class Vehicle {
+  id
+  vin
+  brand
+  model
+  length_m
+  height_m
+  weight_kg
+  status
+  current_location
+}
+
+class Carrier {
+  id
+  name
+  contact_email
+  phone
+  active
+}
+
+class TransportOrder {
+  id
+  pickup_location
+  delivery_location
+  requested_pickup_date
+  requested_delivery_date
+  status
+  priority
+  notes
+  created_by_ai
+}
+
+class TrackingEvent {
+  id
+  event_type
+  location
+  timestamp
+  description
+}
+
+class Invoice {
+  id
+  invoice_number
+  amount
+  currency
+  status
+  issued_at
+}
+
+class AIExtractionLog {
+  id
+  raw_input
+  extracted_json
+  confidence_score
+  validation_errors
+}
+
+Customer "1" -- "0..*" TransportOrder
+Vehicle "1" -- "0..*" TransportOrder
+Carrier "0..1" -- "0..*" TransportOrder
+TransportOrder "1" -- "0..*" TrackingEvent
+TransportOrder "1" -- "0..1" Invoice
+TransportOrder "0..1" -- "0..*" AIExtractionLog
+
+@enduml

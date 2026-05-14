@@ -1,0 +1,24 @@
+' Copyright (c) 2026 Martin Khadjavian. All rights reserved.
+' Website: https://martinkhadjavian.com
+
+@startuml
+title LogiSense Demo Lite - Deployment Diagram
+
+node "Developer Machine" {
+  node "Docker Compose" {
+    node "frontend container" {
+      component "Vite / Svelte\nport 5173" as Frontend
+    }
+
+    node "backend container" {
+      component "Django API\nport 8000" as Backend
+    }
+
+    database "PostgreSQL\nport 5432" as Postgres
+  }
+}
+
+Frontend --> Backend : HTTP JSON
+Backend --> Postgres : SQL
+
+@enduml

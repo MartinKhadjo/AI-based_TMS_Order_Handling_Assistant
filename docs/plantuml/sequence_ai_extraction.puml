@@ -1,0 +1,25 @@
+' Copyright (c) 2026 Martin Khadjavian. All rights reserved.
+' Website: https://martinkhadjavian.com
+
+@startuml
+title AI Extraction Sequence
+
+actor User
+participant "Svelte Frontend" as FE
+participant "Django API" as API
+participant "AIExtractionService" as AI
+participant "ValidationService" as VAL
+database "Database" as DB
+
+User -> FE : Paste customer request
+FE -> API : POST /api/ai/extract-order/
+API -> AI : extract_transport_order(message)
+AI -> AI : parse text / later LLM call
+AI -> VAL : validate_draft(draft)
+VAL --> AI : missing fields, errors, warnings
+AI --> API : draft, confidence, provider
+API -> DB : insert AIExtractionLog
+API --> FE : extraction response
+FE --> User : editable draft
+
+@enduml

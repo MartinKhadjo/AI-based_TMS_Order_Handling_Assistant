@@ -1,0 +1,12 @@
+{
+  "customer_name": "Autohaus Mueller",
+  "vehicle_brand": "BMW",
+  "vehicle_model": "i4",
+  "vin": "WBA123456789ABCDE",
+  "pickup_location": "Duesseldorf",
+  "delivery_location": "Muenchen",
+  "requested_pickup_date": "2026-06-12",
+  "requested_delivery_date": "2026-06-14",
+  "priority": "normal",
+  "notes": "Customer asks to transport a BMW i4 from Duesseldorf to Muenchen."
+}

@@ -1,0 +1,23 @@
+' Copyright (c) 2026 Martin Khadjavian. All rights reserved.
+' Website: https://martinkhadjavian.com
+
+@startuml
+title Tool Calling Sequence
+
+actor User
+participant "Svelte Frontend" as FE
+participant "Django API" as API
+participant "ToolCallingService" as TOOLS
+database "Database" as DB
+
+User -> FE : Ask operational question
+FE -> API : POST /api/ai/query-orders/
+API -> TOOLS : answer_operational_query(message)
+TOOLS -> TOOLS : route to tool
+TOOLS -> DB : query operational data
+DB --> TOOLS : result rows
+TOOLS --> API : tool, arguments, data, answer
+API --> FE : response
+FE --> User : answer + raw data
+
+@enduml

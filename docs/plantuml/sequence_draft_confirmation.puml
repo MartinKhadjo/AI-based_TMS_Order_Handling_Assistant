@@ -1,0 +1,28 @@
+' Copyright (c) 2026 Martin Khadjavian. All rights reserved.
+' Website: https://martinkhadjavian.com
+
+@startuml
+title Draft Confirmation Sequence
+
+actor User
+participant "Svelte Frontend" as FE
+participant "Django API" as API
+participant "ValidationService" as VAL
+participant "OrderService" as OS
+database "Database" as DB
+
+User -> FE : Confirm draft
+FE -> API : POST /api/ai/create-order-draft/
+API -> VAL : validate_draft(draft)
+VAL --> API : valid
+API -> OS : create_order_from_draft(draft)
+OS -> DB : get_or_create Customer
+OS -> DB : get_or_create Vehicle
+OS -> DB : create TransportOrder
+OS -> DB : create TrackingEvent
+OS --> API : TransportOrder
+API -> DB : insert AIExtractionLog
+API --> FE : created order
+FE --> User : refreshed queue
+
+@enduml
